@@ -1,15 +1,13 @@
 import 'package:flutter_portfolio/models/project_model.dart';
 import 'package:flutter_portfolio/responsive/responsive.dart';
-import 'package:flutter_portfolio/utils/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class RecentProject extends StatelessWidget {
   const RecentProject({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return const Column(
       children: [
         Text(
           "Some of My Recent Projects",

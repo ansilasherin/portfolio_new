@@ -1,5 +1,4 @@
 import 'package:flutter_portfolio/responsive/responsive.dart';
-import 'package:flutter_portfolio/utils/colors.dart';
 import 'package:flutter/material.dart';
 
 class ProfileAndIntro extends StatelessWidget {

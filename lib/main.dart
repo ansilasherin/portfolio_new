@@ -1,34 +1,10 @@
-// import 'package:flutter/material.dart';
-// import 'package:flutter_portfolio/home_pag.dart';
-
-// void main() {
-//   runApp(const MyApp());
-// }
-
-// class MyApp extends StatelessWidget {
-//   const MyApp({super.key});
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       debugShowCheckedModeBanner: false,
-//       title: 'Flutter Demo',
-//       theme: ThemeData(
-//         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-//         useMaterial3: true,
-//       ),
-//       home:   DeveloperPortFolio(),
-//     );
-//   }
-// } 
-
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter_portfolio/newwwwwwwwwwwwwwwwwwwwwwwwwww/screens/homepage.dart';
-import 'package:flutter_portfolio/newwwwwwwwwwwwwwwwwwwwwwwwwww/theme/app_theme.dart';
+import 'screens/portfolio_screen.dart';
+import 'theme/app_theme.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const PortfolioApp());
 }
 
@@ -37,33 +13,43 @@ class PortfolioApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Developer Portfolio',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.dark,
-      home:  PortfolioScreen(),
-      builder: (context, child) {
-        // Ensure web scrollbar doesn't affect layout
-        return ScrollConfiguration(
-          behavior: _NoGlowScrollBehavior(),
-          child: child!,
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: AppTheme.themeNotifier,
+      builder: (context, themeMode, _) {
+        return MaterialApp(
+          title: 'Ansila Sherin | Flutter Developer',
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.light,
+          darkTheme: AppTheme.dark,
+          themeMode: themeMode,
+          home: const PortfolioScreen(),
+          builder: (context, child) {
+            return ScrollConfiguration(
+              behavior: const _AppScrollBehavior(),
+              child: child!,
+            );
+          },
         );
       },
     );
   }
 }
 
-class _NoGlowScrollBehavior extends ScrollBehavior {
+class _AppScrollBehavior extends ScrollBehavior {
+  const _AppScrollBehavior();
+
   @override
   Widget buildOverscrollIndicator(
       BuildContext context, Widget child, ScrollableDetails details) {
     return child;
   }
 
-  // Enable mouse drag scrolling on web
+  // Enable mouse drag scrolling on web and desktop
   @override
   Set<PointerDeviceKind> get dragDevices => {
         PointerDeviceKind.touch,
         PointerDeviceKind.mouse,
+        PointerDeviceKind.trackpad,
+        PointerDeviceKind.stylus,
       };
 }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:flutter_portfolio/newwwwwwwwwwwwwwwwwwwwwwwwwww/model/portmodel.dart';
-import 'package:flutter_portfolio/newwwwwwwwwwwwwwwwwwwwwwwwwww/widget/shared_widget.dart';
+import '../models/portfolio_model.dart';
 import '../theme/app_theme.dart';
+import 'shared_widgets.dart';
 
 class SkillsSection extends StatelessWidget {
   const SkillsSection({super.key});
@@ -10,11 +10,12 @@ class SkillsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final w = MediaQuery.of(context).size.width;
-    final isWide = w > 900;
-    final isMed = w > 600;
+    final isWide = w > 960;
+    final isMed = w > 640;
+    final bg = AppColors.bg(context);
 
     return Container(
-      color: AppColors.bg,
+      color: bg,
       padding: const EdgeInsets.symmetric(vertical: AppSizes.sectionPadding),
       child: MaxWidthBox(
         child: Column(
@@ -24,15 +25,16 @@ class SkillsSection extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SectionLabel('Technical Skills'),
+                  const SectionLabel('Technical Stack'),
                   const SizedBox(height: 16),
-                  Text('The tools I work with', style: AppTextStyles.displayMedium),
+                  Text('The tools & technologies I master',
+                      style: AppTextStyles.displayMedium(context)),
                   const SizedBox(height: 12),
                   ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 560),
+                    constraints: const BoxConstraints(maxWidth: 580),
                     child: Text(
-                      'A focused set of technologies I use to build production-quality Flutter applications.',
-                      style: AppTextStyles.bodyLarge,
+                      'A focused set of technologies, architectural patterns, and workflows I leverage to build production-quality Flutter applications.',
+                      style: AppTextStyles.bodyLarge(context),
                     ),
                   ),
                 ],
@@ -40,7 +42,7 @@ class SkillsSection extends StatelessWidget {
             ),
             const SizedBox(height: 48),
 
-            // Grid
+            // Skills Grid
             _SkillsGrid(isWide: isWide, isMed: isMed),
           ],
         ),
@@ -60,19 +62,19 @@ class _SkillsGrid extends StatelessWidget {
     final cols = isWide ? 3 : (isMed ? 2 : 1);
 
     return Wrap(
-      spacing: 20,
-      runSpacing: 20,
+      spacing: 24,
+      runSpacing: 24,
       children: PortfolioData.skillGroups.asMap().entries.map((entry) {
         final idx = entry.key;
         final group = entry.value;
         final cardWidth = isWide
             ? (AppSizes.maxWidth - 104) / 3
             : isMed
-                ? (MediaQuery.of(context).size.width - 104) / 2
+                ? (MediaQuery.of(context).size.width - 96) / 2
                 : double.infinity;
 
         return FadeInUp(
-          delay: Duration(milliseconds: idx * 100),
+          delay: Duration(milliseconds: idx * 120),
           duration: const Duration(milliseconds: 600),
           child: SizedBox(
             width: cols == 1 ? double.infinity : cardWidth,
@@ -97,22 +99,33 @@ class _SkillGroupCardState extends State<_SkillGroupCard> {
 
   @override
   Widget build(BuildContext context) {
+    final surface = AppColors.surface(context);
+    final border = AppColors.border(context);
+    final accent = AppColors.accent(context);
+
     return MouseRegion(
       onEnter: (_) => setState(() => _hovered = true),
       onExit: (_) => setState(() => _hovered = false),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
         padding: const EdgeInsets.all(28),
-        transform: Matrix4.translationValues(0, _hovered ? -4 : 0, 0),
+        transform: Matrix4.translationValues(0, _hovered ? -5 : 0, 0),
         decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(16),
+          color: surface,
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: _hovered ? AppColors.accent.withOpacity(0.25) : AppColors.border,
+            color: _hovered ? accent.withValues(alpha: 0.4) : border,
+            width: 1.2,
           ),
-          boxShadow: _hovered
-              ? [BoxShadow(color: AppColors.accent.withOpacity(0.05), blurRadius: 24, offset: const Offset(0, 8))]
-              : [],
+          boxShadow: [
+            BoxShadow(
+              color: _hovered
+                  ? accent.withValues(alpha: 0.1)
+                  : AppColors.cardShadow(context),
+              blurRadius: _hovered ? 28 : 12,
+              offset: const Offset(0, 6),
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -120,21 +133,30 @@ class _SkillGroupCardState extends State<_SkillGroupCard> {
             Row(
               children: [
                 Container(
-                  width: 36, height: 36,
+                  width: 42,
+                  height: 42,
                   decoration: BoxDecoration(
-                    color: AppColors.accent.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
+                    color: accent.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Center(child: Text(widget.group.icon, style: const TextStyle(fontSize: 16))),
+                  child: Center(
+                    child: Text(widget.group.icon,
+                        style: const TextStyle(fontSize: 20)),
+                  ),
                 ),
-                const SizedBox(width: 12),
-                Text(widget.group.title, style: AppTextStyles.headingSmall),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Text(
+                    widget.group.title,
+                    style: AppTextStyles.headingSmall(context).copyWith(fontSize: 16),
+                  ),
+                ),
               ],
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
             Wrap(
               spacing: 8,
-              runSpacing: 8,
+              runSpacing: 10,
               children: widget.group.skills.map((s) => SkillTag(s)).toList(),
             ),
           ],

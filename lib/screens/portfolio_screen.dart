@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_portfolio/newwwwwwwwwwwwwwwwwwwwwwwwwww/theme/app_theme.dart';
-import 'package:flutter_portfolio/newwwwwwwwwwwwwwwwwwwwwwwwwww/widget/about_section.dart';
-import 'package:flutter_portfolio/newwwwwwwwwwwwwwwwwwwwwwwwwww/widget/blog_contact_section.dart';
-import 'package:flutter_portfolio/newwwwwwwwwwwwwwwwwwwwwwwwwww/widget/hero_section.dart';
-import 'package:flutter_portfolio/newwwwwwwwwwwwwwwwwwwwwwwwwww/widget/navbar.dart';
-import 'package:flutter_portfolio/newwwwwwwwwwwwwwwwwwwwwwwwwww/widget/project_section.dart';
-import 'package:flutter_portfolio/newwwwwwwwwwwwwwwwwwwwwwwwwww/widget/shared_widget.dart';
-import 'package:flutter_portfolio/newwwwwwwwwwwwwwwwwwwwwwwwwww/widget/skil_section.dart';
-
+import '../theme/app_theme.dart';
+import '../widgets/about_section.dart';
+import '../widgets/articles_section.dart';
+import '../widgets/contact_section.dart';
+import '../widgets/footer.dart';
+import '../widgets/hero_section.dart';
+import '../widgets/mobile_drawer.dart';
+import '../widgets/navbar.dart';
+import '../widgets/projects_section.dart';
+import '../widgets/shared_widgets.dart';
+import '../widgets/skills_section.dart';
 
 class PortfolioScreen extends StatefulWidget {
   const PortfolioScreen({super.key});
@@ -17,8 +19,9 @@ class PortfolioScreen extends StatefulWidget {
 }
 
 class _PortfolioScreenState extends State<PortfolioScreen> {
-  final _scrollController = ScrollController();
-  double _scrollProgress = 0;
+  final ScrollController _scrollController = ScrollController();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  double _scrollProgress = 0.0;
 
   final Map<String, GlobalKey> _sectionKeys = {
     'hero': GlobalKey(),
@@ -36,9 +39,29 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
   }
 
   void _onScroll() {
+    if (!_scrollController.hasClients) return;
     final max = _scrollController.position.maxScrollExtent;
     final current = _scrollController.offset;
-    setState(() => _scrollProgress = max > 0 ? current / max : 0);
+    setState(() => _scrollProgress = max > 0 ? (current / max).clamp(0.0, 1.0) : 0.0);
+  }
+
+  void _scrollToSection(String sectionKey) {
+    final key = _sectionKeys[sectionKey];
+    if (key?.currentContext != null) {
+      Scrollable.ensureVisible(
+        key!.currentContext!,
+        duration: const Duration(milliseconds: 700),
+        curve: Curves.easeInOutCubic,
+      );
+    }
+  }
+
+  void _scrollToTop() {
+    _scrollController.animateTo(
+      0,
+      duration: const Duration(milliseconds: 700),
+      curve: Curves.easeInOutCubic,
+    );
   }
 
   @override
@@ -50,34 +73,48 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final bg = AppColors.bg(context);
+    final accent = AppColors.accent(context);
+    final accent2 = AppColors.accent2(context);
+
     return Scaffold(
-      backgroundColor: AppColors.bg,
+      key: _scaffoldKey,
+      backgroundColor: bg,
+      endDrawer: MobileDrawer(
+        scrollController: _scrollController,
+        sectionKeys: _sectionKeys,
+      ),
       body: Stack(
         children: [
           // Main scrollable content
           CustomScrollView(
             controller: _scrollController,
             slivers: [
-              // Nav bar
+              // Pinned navigation bar header
               SliverPersistentHeader(
                 pinned: true,
                 delegate: _NavDelegate(
                   scrollController: _scrollController,
                   sectionKeys: _sectionKeys,
+                  onMenuTap: () => _scaffoldKey.currentState?.openEndDrawer(),
                 ),
               ),
 
-              // Content sections
+              // Content Sections
               SliverList(
                 delegate: SliverChildListDelegate([
                   KeyedSubtree(
                     key: _sectionKeys['hero'],
-                    child: const HeroSection(),
+                    child: HeroSection(
+                      onViewProjectsTap: () => _scrollToSection('projects'),
+                    ),
                   ),
                   const AppDivider(),
                   KeyedSubtree(
                     key: _sectionKeys['about'],
-                    child: const AboutSection(),
+                    child: AboutSection(
+                      onSeeWorkTap: () => _scrollToSection('projects'),
+                    ),
                   ),
                   const AppDivider(),
                   KeyedSubtree(
@@ -92,39 +129,44 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                   const AppDivider(),
                   KeyedSubtree(
                     key: _sectionKeys['blog'],
-                    child: const BlogSection(),
+                    child: const ArticlesSection(),
                   ),
                   const AppDivider(),
                   KeyedSubtree(
                     key: _sectionKeys['contact'],
                     child: const ContactSection(),
                   ),
-                  const PortfolioFooter(),
+                  PortfolioFooter(
+                    onBackToTop: _scrollToTop,
+                  ),
                 ]),
               ),
             ],
           ),
 
-          // Scroll progress bar
+          // Top reading scroll progress bar
           Positioned(
-            top: 0, left: 0, right: 0,
+            top: 0,
+            left: 0,
+            right: 0,
             child: LayoutBuilder(
               builder: (context, constraints) {
                 return Container(
-                  height: 2,
+                  height: 3,
                   alignment: Alignment.centerLeft,
                   child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 100),
+                    duration: const Duration(milliseconds: 50),
                     width: constraints.maxWidth * _scrollProgress,
-                    height: 2,
+                    height: 3,
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [AppColors.accent, AppColors.accent2],
+                      gradient: LinearGradient(
+                        colors: [accent, accent2],
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.accent.withOpacity(0.5),
+                          color: accent.withValues(alpha: 0.6),
                           blurRadius: 6,
+                          offset: const Offset(0, 1),
                         ),
                       ],
                     ),
@@ -142,14 +184,21 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
 class _NavDelegate extends SliverPersistentHeaderDelegate {
   final ScrollController scrollController;
   final Map<String, GlobalKey> sectionKeys;
+  final VoidCallback onMenuTap;
 
-  _NavDelegate({required this.scrollController, required this.sectionKeys});
+  _NavDelegate({
+    required this.scrollController,
+    required this.sectionKeys,
+    required this.onMenuTap,
+  });
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
     return PortfolioNavBar(
       scrollController: scrollController,
       sectionKeys: sectionKeys,
+      onMenuTap: onMenuTap,
     );
   }
 
@@ -158,5 +207,6 @@ class _NavDelegate extends SliverPersistentHeaderDelegate {
   @override
   double get minExtent => AppSizes.navHeight;
   @override
-  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) => false;
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
+      true;
 }

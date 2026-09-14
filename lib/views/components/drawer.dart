@@ -1,4 +1,3 @@
-import 'package:flutter_portfolio/responsive/responsive.dart';
 import 'package:flutter_portfolio/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_portfolio/views/components/topbar.dart';

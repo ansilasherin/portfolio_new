@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_portfolio/newwwwwwwwwwwwwwwwwwwwwwwwwww/theme/app_theme.dart';
 
 // ── Project Model ──
 class Project {
@@ -10,7 +9,8 @@ class Project {
   final List<String> techStack;
   final String githubUrl;
   final String architectureNote;
-  final Color accentColor;
+  final Color darkAccentColor;
+  final Color lightAccentColor;
   final bool isFeatured;
 
   const Project({
@@ -21,9 +21,13 @@ class Project {
     required this.techStack,
     required this.githubUrl,
     required this.architectureNote,
-    required this.accentColor,
+    required this.darkAccentColor,
+    required this.lightAccentColor,
     this.isFeatured = false,
   });
+
+  Color getAccentColor(bool isDark) =>
+      isDark ? darkAccentColor : lightAccentColor;
 }
 
 // ── Skill Group Model ──
@@ -45,12 +49,14 @@ class BlogPost {
   final String title;
   final String excerpt;
   final String url;
+  final String readTime;
 
   const BlogPost({
     required this.category,
     required this.title,
     required this.excerpt,
     required this.url,
+    this.readTime = '4 min read',
   });
 }
 
@@ -67,17 +73,21 @@ class HighlightItem {
   });
 }
 
-// ── All Data ──
+// ── Complete Portfolio Data ──
 class PortfolioData {
-  static const String name = 'Ansila Sherin';
-  static const String title = 'Flutter Developer · Clean Architecture · REST API';
+  static const String name = 'Ansila Sherin Np';
+  static const String shortName = 'Ansila';
+  static const String role = 'Flutter Developer';
+  static const String title =
+      'Flutter Developer · Clean Architecture · REST API';
   static const String tagline =
       'I build scalable, production-ready mobile applications using Flutter and Clean Architecture principles — focused on writing clean, maintainable, and testable code.';
-  static const String email = 'your@email.com';
-  static const String githubUrl = 'https://github.com/yourhandle';
-  static const String linkedinUrl = 'https://linkedin.com/in/yourhandle';
-  static const String resumeUrl = 'https://your-resume-link.pdf';
-// ── Hero Highlights ──        
+  static const String email = 'ansilasherin@gmail.com';
+  static const String githubUrl = 'https://github.com/ansilasherin';
+  static const String linkedinUrl = 'https://linkedin.com/in/ansilasherin';
+  static const String resumeUrl = 'https://drive.google.com';
+
+  // ── Hero Highlights ──
   static const List<HighlightItem> highlights = [
     HighlightItem(
       icon: '🏛',
@@ -104,7 +114,8 @@ class PortfolioData {
           'Firebase Auth, Firestore integration alongside Hive and SharedPreferences for offline-first capabilities.',
     ),
   ];
-// ── Skills & Projects Data ── 
+
+  // ── Skills & Projects Data ──
   static const List<SkillGroup> skillGroups = [
     SkillGroup(
       icon: '📱',
@@ -116,8 +127,8 @@ class PortfolioData {
         'Provider',
         'Widget Lifecycle',
         'Custom UI Components',
+        'Responsive UI',
       ],
-
     ),
     SkillGroup(
       icon: '🌐',
@@ -130,7 +141,7 @@ class PortfolioData {
         'Firebase Firestore',
         'Error Handling',
       ],
-    ),                                
+    ),
     SkillGroup(
       icon: '🔧',
       title: 'Tools & Storage',
@@ -140,13 +151,13 @@ class PortfolioData {
         'Firebase',
         'Hive',
         'SharedPreferences',
-        'Sqlite',
+        'SQLite',
         'VS Code',
       ],
     ),
   ];
 
-  static final List<Project> projects = [
+  static const List<Project> projects = [
     Project(
       number: 'Project 01 · Featured',
       name: 'Water Pipeline\nManagement System',
@@ -159,11 +170,19 @@ class PortfolioData {
         'Admin monitoring panel with complaint analytics',
         'Token-based auth with persistent session via SharedPreferences',
       ],
-      techStack: ['Flutter', 'MVVM', 'Provider', 'REST API', 'SharedPreferences', 'Image Picker'],
-      githubUrl: 'https://github.com/yourhandle/water-pipeline',
+      techStack: [
+        'Flutter',
+        'MVVM',
+        'Provider',
+        'REST API',
+        'SharedPreferences',
+        'Image Picker'
+      ],
+      githubUrl: 'https://github.com/ansilasherin',
       architectureNote:
           '"Implemented token-based auth with REST API and persistent session handling. ViewModels hold all business logic; the UI layer is purely presentational."',
-      accentColor: AppColors.accent,
+      darkAccentColor: Color(0xFF00D4B1),
+      lightAccentColor: Color(0xFF00A88F),
       isFeatured: true,
     ),
     Project(
@@ -178,10 +197,11 @@ class PortfolioData {
         'Provider-driven state with ViewModel separation',
       ],
       techStack: ['Flutter', 'MVVM', 'Provider', 'REST API', 'Firebase'],
-      githubUrl: 'https://github.com/yourhandle/restaurant-app',
+      githubUrl: 'https://github.com/ansilasherin',
       architectureNote:
           '"State is managed through a ReservationViewModel extending ChangeNotifier. The repository layer abstracts all API calls, keeping ViewModels clean."',
-      accentColor: AppColors.accent2,
+      darkAccentColor: Color(0xFF6C63FF),
+      lightAccentColor: Color(0xFF5A52E0),
     ),
     Project(
       number: 'Project 03',
@@ -195,10 +215,11 @@ class PortfolioData {
         'Provider-based cart state shared across the widget tree',
       ],
       techStack: ['Flutter', 'Provider', 'MVVM', 'Hive', 'REST API'],
-      githubUrl: 'https://github.com/yourhandle/ecommerce-cart',
+      githubUrl: 'https://github.com/ansilasherin',
       architectureNote:
           '"CartViewModel exposes reactive streams. Product, Cart, and Order are clean model classes with no UI dependencies. Hive provides local cart persistence."',
-      accentColor: AppColors.yellow,
+      darkAccentColor: Color(0xFFF6C90E),
+      lightAccentColor: Color(0xFFD97706),
     ),
   ];
 
@@ -209,6 +230,7 @@ class PortfolioData {
       excerpt:
           'A practical, step-by-step guide to structuring Flutter apps with proper Model-ViewModel separation using ChangeNotifier and Provider.',
       url: 'https://medium.com',
+      readTime: '5 min read',
     ),
     BlogPost(
       category: 'State Management',
@@ -216,6 +238,7 @@ class PortfolioData {
       excerpt:
           'A clear breakdown of both approaches, their performance implications, and the exact scenarios where each one belongs in a production app.',
       url: 'https://medium.com',
+      readTime: '4 min read',
     ),
     BlogPost(
       category: 'API Integration',
@@ -223,6 +246,7 @@ class PortfolioData {
       excerpt:
           'How to implement secure token storage using SharedPreferences, handle token expiry gracefully, and structure your API service layer cleanly.',
       url: 'https://medium.com',
+      readTime: '6 min read',
     ),
   ];
 }
